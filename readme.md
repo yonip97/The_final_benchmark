@@ -25,8 +25,8 @@ Each entry in the dataset contains the following fields:
     "The summary makes up his age",
     "The summary makes up the flight duration"
         ],
-        "set": "dev",
-        "DeFacto_label": "inconsistent"
+  "set": "dev",
+  "DeFacto_label": "inconsistent"
     }
  ```
 ## Evaluation Pipeline
