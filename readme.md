@@ -5,7 +5,9 @@ This repository contains the dataset and evaluation pipeline accompanying our pa
 
 ## Dataset
 
-The dataset is located in the `data` directory and is divided into **development** and **test** sets.  
+We provide the data files in **`./data`** and a simple data loader **``dataloader.py``**.
+
+Our dataset is built using the DeFacto dataset introduced in the paper [On Improving Summarization Factual Consistency from Natural Language Feedback](https://arxiv.org/pdf/2212.09968).
 
 Each entry in the dataset contains the following fields:
 
@@ -14,6 +16,7 @@ Each entry in the dataset contains the following fields:
 3. **human_descriptions** – A list of human annotations, where each entry provides a natural language description of a single factual inconsistency in the summary. 
 4. **set** – Indicates whether the entry belongs to the `dev` or `test` split.  
 5. **DeFacto_label** – The original DeFacto label: either `consistent` or `inconsistent`.  
+6. **doc_id** - DeFacto dataset doc_id.
 
 **Example entry:**
 
@@ -25,8 +28,9 @@ Each entry in the dataset contains the following fields:
     "The summary makes up his age",
     "The summary makes up the flight duration"
         ],
-  "set": "dev",
-  "DeFacto_label": "inconsistent"
+  "split": "dev",
+  "DeFacto_label": "inconsistent",
+  "doc_id":3022 
     }
  ```
 ## Evaluation Pipeline
