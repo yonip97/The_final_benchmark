@@ -2,20 +2,14 @@
 
 This repository contains the dataset and evaluation pipeline accompanying our paper.TODO:ADD PAPER LINK.
 
-Our paper presents **The Final Benchmark**, a benchmark design to evulate LLMs abilty for fine grain factual inconsistency detection in summaries.
-
-
+Our paper introduces **The Final Benchmark**, a benchmark designed to evaluate LLMs’ ability to perform fine grained detection of factual inconsistencies in summaries. It also proposes an LLM as a judge based evaluation pipeline to assess model performance on this task.
 
 ## Dataset
 
 The data files are in **`./data`**, and a simple loader is provided in **``dataloader.py``**. 
 
-Our dataset is adapted from the DeFacto dataset introduced in the paper [On Improving Summarization Factual Consistency from Natural Language Feedback](https://arxiv.org/pdf/2212.09968); 
-
-we manually curated and adapted DeFacto, then further enriched it via human–LLM collaboration. 
-
+Our dataset is adapted from the DeFacto dataset introduced in the paper [On Improving Summarization Factual Consistency from Natural Language Feedback](https://arxiv.org/pdf/2212.09968); we manually curated and adapted DeFacto, then further enriched it via human–LLM collaboration. 
 The result is a comparative benchmark containing 1,405 text–summary pairs, of which 1,121 summaries are inconsistent, with 2,131 annotated inconsistencies.
-
 Each entry in the dataset contains the following fields:
 
 1. **text** – The original XSum text.  
