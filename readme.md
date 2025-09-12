@@ -16,7 +16,7 @@ Each entry in the dataset contains the following fields:
 1. **text** – The original XSum text.  
 2. **summary** – A Pegasus generated summary of the text.  
 3. **human_descriptions** – A list of human annotations, where each entry provides a natural language description of a single factual inconsistency in the summary. 
-4. **set** – Indicates whether the entry belongs to the `dev` or `test` split.  
+4. **split** – Indicates whether the entry belongs to the `dev` or `test` split.  
 5. **DeFacto_label** – The original DeFacto label: either `consistent` or `inconsistent`.  
 6. **doc_id** - DeFacto dataset doc_id.
 
