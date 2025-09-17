@@ -1,6 +1,6 @@
 # The Final Benchmark
 
-This repository contains the dataset and evaluation pipeline accompanying our paper.TODO:ADD PAPER LINK.
+This repository contains the dataset and evaluation pipeline accompanying our paper.
 
 Our paper introduces **The Final Benchmark**, a benchmark designed to evaluate LLMs’ ability to perform fine grained detection of factual inconsistencies in summaries. It also proposes an LLM as a judge based evaluation pipeline to assess model performance on this task.
 
@@ -35,6 +35,3 @@ Each entry in the dataset contains the following fields:
   "doc_id":3022 
     }
  ```
-## Evaluation Pipeline
-
-**TODO**: 
