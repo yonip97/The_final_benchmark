@@ -1,15 +1,17 @@
 # The Final Benchmark
 
-This repository contains the dataset and evaluation pipeline accompanying our paper.
+This repository contains the dataset and evaluation pipeline accompanying the paper: “Fine-Grained Detection of Context-Grounded Hallucinations Using LLMs”
 
-Our paper introduces **The Final Benchmark**, a benchmark designed to evaluate LLMs’ ability to perform fine grained detection of factual inconsistencies in summaries. It also proposes an LLM as a judge based evaluation pipeline to assess model performance on this task.
+We introduce **Final**: a benchmark designed to evaluate LLMs’ ability to perform fine grained localization of factual inconsistencies in a grounded generation setup. We also propose an LLM-based evaluation pipeline to assess model performance on this task.
 
 ## Dataset
 
-The data files are in **`./data`**, and a simple loader is provided in **``dataloader.py``**. 
+The data files are in **`./data`**, and a data loader is provided in **``dataloader.py``**. 
 
-Our dataset is adapted from the DeFacto dataset introduced in the paper [On Improving Summarization Factual Consistency from Natural Language Feedback](https://arxiv.org/pdf/2212.09968); we manually curated and adapted DeFacto, then further enriched it via human–LLM collaboration. 
-The result is a comprehensive dataset containing 1,405 text–summary pairs, of which 1,121 summaries are inconsistent, with 2,131 annotated inconsistencies.
+The dataset contains 1,405 text–summary pairs, of which 1,121 summaries contain inconsistencies, and a total of 2,131 annotated inconsistencies.
+
+We built the dataset based on the DeFacto dataset introduced in the paper [On Improving Summarization Factual Consistency from Natural Language Feedback](https://arxiv.org/pdf/2212.09968).
+
 
 Each entry in the dataset contains the following fields:
 
@@ -19,6 +21,7 @@ Each entry in the dataset contains the following fields:
 4. **split** – Indicates whether the entry belongs to the `dev` or `test` split.  
 5. **DeFacto_label** – The original DeFacto label: either `consistent` or `inconsistent`.  
 6. **doc_id** - DeFacto dataset doc_id.
+
 
 **Example entry:**
 
