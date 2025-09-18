@@ -1,6 +1,6 @@
 # The Final Benchmark
 
-This repository contains the dataset and evaluation pipeline accompanying the paper: “Fine-Grained Detection of Context-Grounded Hallucinations Using LLMs”
+This repository contains the dataset and evaluation pipeline accompanying the paper: ``Fine-Grained Detection of Context-Grounded Hallucinations Using LLMs``.
 
 We introduce **Final**: a benchmark designed to evaluate LLMs’ ability to perform fine grained localization of factual inconsistencies in a grounded generation setup. We also propose an LLM-based evaluation pipeline to assess model performance on this task.
 
