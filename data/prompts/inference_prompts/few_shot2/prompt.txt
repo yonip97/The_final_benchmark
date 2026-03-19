@@ -26,13 +26,13 @@ A. Description: The summary states the people have been arrested on suspicion of
 B. Description: The summary states that the fire took place in east London, but this information does not appear in the text.
 
 Example 2:
-Text: The Woodland Trust wants to buy the land at Llennyrch woodland. Natural Resources Wales (NRW) has given £50,000 but a further £750,000 is needed and a campaign will be launched on Tuesday at the National Eisteddfod in Meifod, Powys. The charity said the area has been called a "Celtic rainforest" and it wants to improve wildlife on the site. NRW chief executive Dr Emyr Roberts said: "This is a fantastic opportunity to bring the whole woodland area under conservation management." The total cost of the project is £1.5m and the rest of the cost will be met by money left to the Woodland Trust.
+Text: The Woodland Trust wants to buy the land at Llennyrch woodland. Natural Resources Wales (NRW) has given Â£50,000 but a further Â£750,000 is needed and a campaign will be launched on Tuesday at the National Eisteddfod in Meifod, Powys. The charity said the area has been called a "Celtic rainforest" and it wants to improve wildlife on the site. NRW chief executive Dr Emyr Roberts said: "This is a fantastic opportunity to bring the whole woodland area under conservation management." The total cost of the project is Â£1.5m and the rest of the cost will be met by money left to the Woodland Trust.
 
-Summary: A campaign has been launched to raise £1m to buy 1,000 acres of woodland in Carmarthenshire.
+Summary: A campaign has been launched to raise Â£1m to buy 1,000 acres of woodland in Carmarthenshire.
 
 Inconsistencies:
 A. Description: The summary states they want to buy 1000 acres of woodland, but acreage is not mentioned in the source text.
-B. Description: The summary states the campaign wants to raise £1m, but the source text says the campaign wants to raise an additional £750,000.
+B. Description: The summary states the campaign wants to raise Â£1m, but the source text says the campaign wants to raise an additional Â£750,000.
 C. Description: The summary states the woodland is in Carmarthenshire, but the source text says it's in Llennyrch.
 D. Description: The summary states the campaign has been launched, but the source text says it will be launched.
 Example 3:
@@ -47,5 +47,11 @@ Inconsistencies:
 None
 ```
 
-Here is a new example. 
-```
+Here is a new example.
+
+Text:
+{text}
+
+Summary:
+{summary}
+

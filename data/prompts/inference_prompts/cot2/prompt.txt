@@ -6,3 +6,8 @@ Contradicted by the text (directly conflicts with the text).
 Not verifiable from the text (lacks necessary support in the text).
 For each inconsistency, describe exactly what is incorrect in the summary.
 
+Text:
+{text}
+
+Summary:
+{summary}

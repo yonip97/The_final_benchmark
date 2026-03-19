@@ -1,1 +1,7 @@
 I will give you a text and a summary. Your task is to identify all the facts in the summary that cannot be verified using the text and clearly describe each factual inconsistency. Think step by step.
+
+Text:
+{text}
+
+Summary:
+{summary}
