@@ -1,0 +1,47 @@
+I will give you a text and a summary. Your task is to identify and explain all factual inconsistencies in the summary. A factual inconsistency is any information in the summary that cannot be verified by the original text. 
+Focus only on factual inconsistencies, and no other types of mistakes,such as omission.
+List all the facts you found to be inconsistent with the text. Each inconsistent fact should appear separately. List each inconsistent fact as a short description of the inconsistency. The description should be brief and concise.
+If there are no factual inconsistencies in the summary, return None.
+
+The following are examples of texts, summaries and the corresponding lists of such facts.
+
+```
+Text:
+A 27-year-old man and a woman, 32, were detained after the 60-year-old victim's body was found at the Forest Gate house, early on Christmas Day. Four people escaped from the house on Field Road before firefighters arrived just before 04:45 GMT. A post-mortem test showed the victim had died from burns and the inhalation of fumes, the Met Police said. Fire crews found his body on the ground-floor of the two-storey house. Police believe "the fire was started deliberately" and say they believe they know who the victim was, but formal identification has not yet been made. Twenty one firefighters and four engines tackled the blaze, which was brought under control after about two-and-a-half hours. Det Ch Insp Steve McCabe said: "I need to hear from anyone who saw anything suspicious in Field Road and the surrounding area in the early hours of Christmas Day.
+Summary:
+Two people have been arrested on suspicion of murder after a man died in a house fire in east London.
+
+A.
+Description:
+The summary states the people have been arrested on suspicion of murder, but the source text does not state the charges against them.
+B.
+Description:
+The summary states that the fire took place in east London, but this information does not appear in the text.
+
+Text:
+The Woodland Trust wants to buy the land at Llennyrch woodland. Natural Resources Wales (NRW) has given £50,000 but a further £750,000 is needed and a campaign will be launched on Tuesday at the National Eisteddfod in Meifod, Powys. The charity said the area has been called a "Celtic rainforest" and it wants to improve wildlife on the site. NRW chief executive Dr Emyr Roberts said: "This is a fantastic opportunity to bring the whole woodland area under conservation management." The total cost of the project is £1.5m and the rest of the cost will be met by money left to the Woodland Trust.
+Summary:
+A campaign has been launched to raise £1m to buy 1,000 acres of woodland in Carmarthenshire.
+A.
+Description:
+The summary states they want to buy 1000 acres of woodland, but acreage is not mentioned in the source text.
+B.
+Description:
+The summary states the campaign wants to raise £1m, but the source text says the campaign want to raise an additional £750,000.
+C.
+Description:
+The summary states the woodland is in Carmarthenshire, but the source text says it's in Llennyrch.
+D.
+Description:
+The summary states the campaign has been launched, but the source text says it will be launched.
+
+Text:
+The 14-month old tabby and white called Pumbaa was found bleeding in a Peterborough alleyway on Saturday. The stab wound was so deep the vet was unable to operate before Pumbaa died. A second cat - Mischief - was shot by an air rifle in an area near to where Pumbaa was stabbed, according to the RSPCA. It is unclear whether the two incidents are linked. RSPCA inspector Justin Stubbs said: "These were two shocking and completely senseless attacks." Pumbaa's owner, Kirsty Cracknell, 29, of Croyland Road, said: "I am utterly devastated about Pumbaa - he was such a soppy little mummy's boy. I just keep expecting him to jump through the window. "What particularly breaks my heart is that I think he must have been on his way home to me, considering where he was found."
+Summary:
+A cat has been stabbed to death in what the RSPCA described as a "senseless attack".
+
+None
+```
+
+Here is a new example. 
+```

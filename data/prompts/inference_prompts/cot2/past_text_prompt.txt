@@ -1,0 +1,4 @@
+Think step by step, and at the end of your response, under "Final Output:", provide a clear description of each mistake.
+Mark each inconsistency with letters A, B, C, etc.
+Focus only on what is wrong in the summary.
+If no factual inconsistencies were identified, under "Final Output:" return None.

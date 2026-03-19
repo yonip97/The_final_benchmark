@@ -1,0 +1,5 @@
+Think about the matching step by step and output a JSON object:
+For each description in the Predicted Output provide:
+• A key corresponding to the predicted description's identifier (e.g., A, B, C, etc.).
+• If a match is found, set the value to the identifier from the Gold Label that matches it.
+• If no match is found, set the value to null

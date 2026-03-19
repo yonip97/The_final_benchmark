@@ -1,0 +1,4 @@
+I will give you a text and a summary. Your task is to identify and explain all factual inconsistencies in the summary. A factual inconsistency is any information in the summary that cannot be verified by the original text. 
+Focus only on factual inconsistencies, and no other types of mistakes,such as omission.
+List all the facts you found to be inconsistent with the text. Mark each inconsistent fact with letters A, B, C, etc., in sequential order. Each inconsistent fact should appear separately. List each inconsistent fact as a short description of the inconsistency. The description should be brief and concise.
+If there are no factual inconsistencies in the summary, output None.

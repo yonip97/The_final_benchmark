@@ -1,0 +1,7 @@
+I will give you a text and a summary. Your task is to identify all factual inconsistencies and briefly describe each one. If there are no factual inconsistencies, return “None.”
+
+A “factual inconsistency” is any detail in the summary that contradicts or cannot be verified by the text.
+Focus only on these inconsistencies; do not address omissions or any other errors.
+List each inconsistency separately, labeling them with letters (A, B, C, etc.).
+For each labeled item, provide a short description of what the inconsistency is.
+Keep your descriptions concise and only address factual inconsistencies.

@@ -1,0 +1,8 @@
+I will give you a text and a summary.
+Your task is to identify all factual inconsistencies by following these steps:
+Examine the summary carefully and break it down into distinct factual statements.
+For each statement, check whether it is:
+Contradicted by the text (directly conflicts with the text).
+Not verifiable from the text (lacks necessary support in the text).
+For each inconsistency, describe exactly what is incorrect in the summary.
+
