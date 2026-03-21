@@ -1,7 +1,3 @@
-"""
-Load credentials from a file and inject them into os.environ.
-Call load_credentials() at startup before using any model APIs.
-"""
 import os
 from pathlib import Path
 
