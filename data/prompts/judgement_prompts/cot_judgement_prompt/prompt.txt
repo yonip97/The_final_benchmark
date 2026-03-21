@@ -9,12 +9,18 @@ Gold Label: A set of descriptions labeled with identifiers (e.g., A, B, C).
 Detailed Instructions
 
 For each description in the Predicted Output:
-• Compare the exact description of the inconsistency to items in the Gold Label.
-• A match occurs if:
-– Both descriptions identify the exact same fact from the summary as being wrong, regardless of why that fact is considered incorrect.
-– The description in the Predicted Output is not ambiguous - it clearly refers to one specific fact from the summary. vague or overly broad descriptions should not be matched.
+- Compare the exact description of the inconsistency to items in the Gold Label.
+- A match occurs if:
+â€¢ Both descriptions identify the exact same fact from the summary as being wrong, regardless of why that fact is considered incorrect.
+â€¢ The description in the Predicted Output is not ambiguous - it clearly refers to one specific fact from the summary. vague or overly broad descriptions should not be matched.
 Each description in the Predicted Output can match at most one description in the Gold Label.
 
-If the Predicted Output is empty (no descriptions were given, or any other input is given), return an empty JSON object ({}).
+If the Predicted Output is empty (no descriptions were given, or any other input is given), return an empty JSON object ({{}}).
 
 If the Gold Label is empty, return a JSON object with the keys of the Predicted Output and null value for each.
+
+summary: {summary}
+
+Gold Label: {gold}
+
+Predicted Output: {model_output}
