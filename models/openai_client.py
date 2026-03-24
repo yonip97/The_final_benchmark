@@ -34,23 +34,21 @@ class GPTModel:
             raise ValueError("OPENAI_API_KEY must be set (env or api_key=)")
         self._client = OpenAI(api_key=self._api_key)
 
-    def create_config(self, prompt: str, **kwargs) -> dict:
-        max_ct = kwargs.get("max_new_tokens", 2000)
+    def create_config(self, prompt: str, max_new_tokens:int ,temperature: float, **kwargs) -> dict:
         create_kwargs: dict = {
             "model": self.model,
             "messages": [{"role": "user", "content": prompt}],
-            "max_completion_tokens": max_ct,
+            "max_completion_tokens": max_new_tokens,
         }
         rl = (kwargs.get("reasoning_level") or "minimal").strip().lower()
         if _is_gpt_5_or_up(self.model):
             create_kwargs["reasoning_effort"] = self._reasoning_level_to_reasoning_effort[rl]
         else:
-            if kwargs.get("temperature") is not None:
-                create_kwargs["temperature"] = kwargs["temperature"]
+            create_kwargs["temperature"] = temperature
         return create_kwargs
 
-    def infer_with_usage(self, prompt: str, **kwargs) -> tuple[str, int, int]:
-        create_kwargs = self.create_config(prompt, **kwargs)
+    def infer_with_usage(self, prompt: str,max_new_tokens: int,temperature: float, **kwargs) -> tuple[str, int, int]:
+        create_kwargs = self.create_config(prompt,max_new_tokens,temperature, **kwargs)
         for attempt in range(self.max_retries + 1):
             try:
                 resp = self._client.chat.completions.create(**create_kwargs)

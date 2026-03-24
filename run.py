@@ -7,17 +7,23 @@ from evaluation import (
     make_results_dir,
     run_evaluation,
 )
-from models import ClaudeModel, GeminiModel, GPTModel, HuggingFaceModel
+from models import ClaudeModel, GeminiModel, Gemma3LocalModel, GPTModel, Ministral3LocalModel
 from load_credentials import load_credentials
 
 
-def get_model(model_id: str, *, api_retries: int = 5) -> Any:
+def _torch_local_device(cli: str) -> str:
+    """CLI uses ``cpu`` / ``gpu``; PyTorch loaders use ``cpu`` / ``cuda``."""
+    return "cuda" if cli == "gpu" else "cpu"
+
+
+def get_model(model_id: str, *, api_retries: int = 5, local_device: str = "cuda") -> Any:
     """
     Resolve model_id to a model instance. Supports:
     - openai:* or gpt-* -> GPTModel
     - anthropic:* or claude-* -> ClaudeModel
     - google:* or gemini-* -> GeminiModel
-    - hf:* or model names containing / (e.g. Qwen/Qwen2.5-7B) -> HuggingFaceModel
+    - Local: mistralai/Ministral-3-14B-Instruct-2512 or google/gemma-3-12b-it (hf: prefix optional).
+      ``local_device`` is ``\"cpu\"`` or ``\"cuda\"`` for the local model classes (CLI: use ``--local-device cpu|gpu``).
     Temperature and max_new_tokens are passed at call time (infer_with_usage).
     """
     id_lower = model_id.strip().lower()
@@ -31,9 +37,14 @@ def get_model(model_id: str, *, api_retries: int = 5) -> Any:
         name = model_id.split(":", 1)[-1].strip() if ":" in model_id else model_id
         return GeminiModel(model=name, max_retries=api_retries)
     if id_lower.startswith("hf:") or "/" in model_id:
-        name = model_id.split(":", 1)[-1].strip() if id_lower.startswith("hf:") else model_id
-        return HuggingFaceModel(model_id=name)
-    # Heuristics by prefix
+        name = model_id.split(":", 1)[-1].strip() if id_lower.startswith("hf:") else model_id.strip()
+        if name == Ministral3LocalModel.MODEL_ID:
+            return Ministral3LocalModel(local_device=local_device)
+        if name == Gemma3LocalModel.MODEL_ID:
+            return Gemma3LocalModel(local_device=local_device)
+        raise ValueError(
+            f"Unsupported local model {name!r}. Use {Ministral3LocalModel.MODEL_ID!r} or {Gemma3LocalModel.MODEL_ID!r}."
+        )
     if id_lower.startswith("gpt"):
         return GPTModel(model=model_id, max_retries=api_retries)
     if id_lower.startswith("claude"):
@@ -48,7 +59,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(
         description="Run evaluation. Both --inference_prompt and --judgement_prompt are required (dir names under data/prompts/)."
     )
-    parser.add_argument("--judged_model", required=True, help="Model being evaluated (e.g. gpt-4o-mini, claude-3-5-sonnet, hf:Qwen/Qwen2.5-7B-Instruct)")
+    parser.add_argument("--judged_model", required=True, help="Model being evaluated (API id or hf:mistralai/Ministral-3-14B-Instruct-2512 / google/gemma-3-12b-it)")
     parser.add_argument("--judge_model", required=True, help="Judge model (e.g. gpt-4o-mini); used in run dir name and for future LLM judge.")
     parser.add_argument("--inference_prompt", required=True, help="Prompt dir name under data/prompts/inference_prompts/ (e.g. zero_shot1, cot2).")
     parser.add_argument("--judgement_prompt", required=True, help="Prompt dir name under data/prompts/judgement_prompts/")
@@ -63,7 +74,9 @@ def main() -> None:
     parser.add_argument("--inference_delimiter", default=None, help="Delimiter to cut the judged model's final answer from its CoT (e.g. 'Final answer:' or '---').")
     parser.add_argument("--judgment_delimiter", default=None, help="Delimiter to cut the final JSON/dict from the judge's CoT (e.g. 'FINAL ANSWER:' or '```json'). Required for LLM judge.")
     parser.add_argument("--allow_duplicates", action="store_true", help="Allow execution if results for these models and prompts already")
+    parser.add_argument("--local-device",choices=("cpu", "gpu"),default="cpu",dest="local_device",help="Local Ministral/Gemma only: cpu or gpu (default: gpu). Ignored for API models.")
     args = parser.parse_args()
+    local_torch = _torch_local_device(args.local_device)
 
     inference_prompt_name = args.inference_prompt.strip()
     judgement_prompt_name = args.judgement_prompt.strip()
@@ -91,10 +104,11 @@ def main() -> None:
         "inference_workers": args.inference_workers,
         "judgment_workers": args.judgment_workers,
         "api_retries": args.api_retries,
+        "local_device": args.local_device,
     }
 
-    judged_model = get_model(args.judged_model, api_retries=args.api_retries)
-    judge_model = get_model(args.judge_model, api_retries=args.api_retries)
+    judged_model = get_model(args.judged_model, api_retries=args.api_retries, local_device=local_torch)
+    judge_model = get_model(args.judge_model, api_retries=args.api_retries, local_device=local_torch)
     metrics = run_evaluation(
         judged_model,
         judge_model,
@@ -111,11 +125,12 @@ def main() -> None:
         temperature=args.temperature,
         max_new_tokens=args.max_new_tokens,
         reasoning_level=args.reasoning_level,
+        local_device=local_torch,
         run_config=run_config,
     )
     print(json.dumps(metrics, indent=2))
     print(f"Results dir: {results_dir}")
 
-    
+
 if __name__ == "__main__":
     main()

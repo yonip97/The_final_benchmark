@@ -56,12 +56,10 @@ class GeminiModel:
         self._retryable = _GOOGLE_RETRYABLE
         self._client = genai.Client(api_key=self._api_key)
 
-    def create_config(self, **kwargs) -> types.GenerateContentConfig:
-        max_out = kwargs.get("max_new_tokens", 2000)
+    def create_config(self,max_new_tokens: int,temperature: float, **kwargs) -> types.GenerateContentConfig:
         rl = (kwargs.get("reasoning_level") or "minimal").strip().lower()
-        config_kwargs: dict = {"max_output_tokens": max_out}
-        if kwargs.get("temperature") is not None:
-            config_kwargs["temperature"] = kwargs["temperature"]
+        config_kwargs: dict = {"max_output_tokens": max_new_tokens}
+        config_kwargs["temperature"] = temperature
 
         m = self.model.strip().lower()
         if m.startswith("gemini-2.5"):
@@ -80,8 +78,8 @@ class GeminiModel:
 
         return types.GenerateContentConfig(**config_kwargs)
 
-    def infer_with_usage(self, prompt: str, **kwargs) -> tuple[str, int, int]:
-        config = self.create_config(**kwargs)
+    def infer_with_usage(self, prompt: str,max_new_tokens: int,temperature: float, **kwargs) -> tuple[str, int, int]:
+        config = self.create_config(max_new_tokens,temperature,**kwargs)
 
         for attempt in range(self.max_retries + 1):
             try:

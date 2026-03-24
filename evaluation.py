@@ -8,8 +8,16 @@ from dataloader import load_data
 from inference import run_judged_model_inference, run_judge_model_inference
 from judgment import results_from_judge_outputs
 
+def _model_id_for_results_dir(model_id: str) -> str:
+    """HF org/name ids would split path segments; only the results dir name uses this."""
+    return model_id.replace("/", "_")
+
+
 def make_results_dir(judged_model, judge_model, inference_prompt_name, judgement_prompt_name, results_root, data_split, allow_duplicates):
-    experiment_name = f"{judged_model}__{judge_model}__{inference_prompt_name}__{judgement_prompt_name}"
+    experiment_name = (
+        f"{_model_id_for_results_dir(judged_model)}__{_model_id_for_results_dir(judge_model)}__"
+        f"{inference_prompt_name}__{judgement_prompt_name}"
+    )
     parent_path = Path(results_root) / experiment_name
     if not parent_path.exists():
         parent_path.mkdir()
@@ -54,13 +62,14 @@ def run_evaluation(
     temperature: float | None = None,
     max_new_tokens: int | None = None,
     reasoning_level: str | None = None,
+    local_device: str = "cuda",
     run_config: dict | None = None,
 ) -> dict:
     """
     Full pipeline: inference (judged model) -> inference (judge model) -> compute_metrics.
     Both judged and judge can be api or local; backend inferred from model id (hf: or org/name → local) if not set.
     """
-    df = load_data(split=split)[:5]
+    df = load_data(split=split)
     if run_config is not None:
         (results_dir / "config.json").write_text(json.dumps(run_config, indent=2))
 
@@ -87,6 +96,7 @@ def run_evaluation(
         temperature=temperature,
         max_new_tokens=max_new_tokens,
         reasoning_level=reasoning_level,
+        local_device=local_device,
         output_delimiter=inference_delimiter,
         save_path=results_dir / "judged_outputs.json",
     )
@@ -108,6 +118,7 @@ def run_evaluation(
         temperature=temperature,
         max_new_tokens=max_new_tokens,
         reasoning_level=reasoning_level,
+        local_device=local_device,
         output_delimiter=judgment_delimiter,
         save_path=results_dir / "judge_outputs.json",
     )

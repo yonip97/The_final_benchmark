@@ -5,7 +5,7 @@ from typing import Any, Callable, List
 from tqdm import tqdm
 
 from judgment import build_judge_model_inputs
-from parallel_inference import infer_parallel_api_with_usage, infer_parallel_gpu
+from parallel_inference import infer_parallel_api_with_usage, infer_parallel_local
 from prompts import extract_cot_final_output, load_prompt_for_run, parse_judge_output_to_dict
 from utils import compute_price
 
@@ -71,6 +71,7 @@ def run_model_inference(
     temperature: float | None = None,
     max_new_tokens: int | None = None,
     reasoning_level: str | None = None,
+    local_device: str = "cuda",
 ) -> tuple[List[str | None], List[float], List[str | None]]:
     """Run model on inputs; returns (raw_outputs, prices, errors). Dispatch to API or local internally."""
     if backend == "api":
@@ -87,6 +88,7 @@ def run_model_inference(
         parallel=parallel, workers=workers,
         temperature=temperature, max_new_tokens=max_new_tokens,
         reasoning_level=reasoning_level,
+        local_device=local_device,
     )
 
 
@@ -139,18 +141,31 @@ def run_inference_local(
     temperature: float | None = None,
     max_new_tokens: int | None = None,
     reasoning_level: str | None = None,
+    local_device: str = "cuda",
 ) -> tuple[List[str | None], List[float], List[str | None]]:
-    """Local backend: single process or multiple (GPU processes). price=0 for all. Returns (raw_outputs, prices, errors)."""
-    if parallel:
-        return run_inference_gpu_parallel(
-            model_id, model_inputs, num_processes=workers,
-            temperature=temperature, max_new_tokens=max_new_tokens,
-        )
+    """Local backend: sequential in-process, or multiprocess (one model copy per worker, one generate per prompt). price=0."""
     infer_kwargs = _infer_kwargs(
         temperature=temperature,
         max_new_tokens=max_new_tokens,
         reasoning_level=reasoning_level,
     )
+    if parallel and model_id is not None and workers > 1:
+        raw = infer_parallel_local(
+            model_id, model_inputs, num_processes=workers, local_device=local_device, **infer_kwargs
+        )
+        raw_outputs: List[str | None] = []
+        prices: List[float] = []
+        errors: List[str | None] = []
+        for s in raw:
+            if s.startswith("[ERROR:") and "]" in s:
+                raw_outputs.append(None)
+                prices.append(0.0)
+                errors.append(s.strip())
+            else:
+                raw_outputs.append(s)
+                prices.append(0.0)
+                errors.append(None)
+        return (raw_outputs, prices, errors)
     raw_outputs = []
     prices = []
     errors = []
@@ -167,29 +182,6 @@ def run_inference_local(
     return (raw_outputs, prices, errors)
 
 
-def run_inference_gpu_parallel(
-    model_id: str,
-    model_inputs: List[str],
-    num_processes: int = 2,
-    **kwargs,
-) -> tuple[List[str | None], List[float], List[str | None]]:
-    """Run HF model on model inputs, split across processes. price=0; error parsed from [ERROR: ...] strings. Returns (raw_outputs, prices, errors)."""
-    raw = infer_parallel_gpu(model_id, model_inputs, num_processes=num_processes, **kwargs)
-    raw_outputs = []
-    prices = []
-    errors = []
-    for s in raw:
-        if s.startswith("[ERROR:") and "]" in s:
-            raw_outputs.append(None)
-            prices.append(0.0)
-            errors.append(s.strip())
-        else:
-            raw_outputs.append(s)
-            prices.append(0.0)
-            errors.append(None)
-    return (raw_outputs, prices, errors)
-
-
 def run_judged_model_inference(
     model: Any,
     backend: str,
@@ -203,6 +195,7 @@ def run_judged_model_inference(
     temperature: float | None = None,
     max_new_tokens: int | None = None,
     reasoning_level: str | None = None,
+    local_device: str = "cuda",
     output_delimiter: str | None = None,
     save_path: Path | None = None,
 ) -> List[str | None]:
@@ -216,6 +209,7 @@ def run_judged_model_inference(
         parallel=parallel, workers=workers,
         temperature=temperature, max_new_tokens=max_new_tokens,
         reasoning_level=reasoning_level,
+        local_device=local_device,
     )
     return _apply_delimiter_and_save(
         raw_outputs, prices, errors, model_inputs, output_delimiter, save_path,
@@ -237,6 +231,7 @@ def run_judge_model_inference(
     temperature: float | None = None,
     max_new_tokens: int | None = None,
     reasoning_level: str | None = None,
+    local_device: str = "cuda",
     output_delimiter: str | None = None,
     save_path: Path | None = None,
 ) -> tuple[List[dict | None], List[str]]:
@@ -247,6 +242,7 @@ def run_judge_model_inference(
         parallel=parallel, workers=workers,
         temperature=temperature, max_new_tokens=max_new_tokens,
         reasoning_level=reasoning_level,
+        local_device=local_device,
     )
     processed = _apply_delimiter_and_save(
         raw_outputs, prices, errors, model_inputs, output_delimiter, save_path,
