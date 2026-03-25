@@ -49,7 +49,7 @@ def _local_worker_run(
     else:
         raise ValueError(f"Unknown local model_id {model_id!r}")
     out: list[tuple[int, str, int, int, str | None]] = []
-    for idx, text in batch:
+    for idx, text in tqdm(batch):
         try:
             t, in_tok, out_tok = model.infer_with_usage(text, **infer_kwargs)
             out.append((idx, t, in_tok, out_tok, None))
@@ -107,13 +107,10 @@ def infer_parallel_local(
         for i in range(n)
     ]
     ctx = mp.get_context("spawn")
-    n_prompts = len(model_inputs)
     chunks: list[list[tuple[int, str, int, int, str | None]]] = []
     with ctx.Pool(n) as pool:
-        with tqdm(total=n_prompts, desc="Inference (local parallel)", unit="prompt") as pbar:
-            for chunk in pool.imap_unordered(_local_worker_tuple, args_list):
-                chunks.append(chunk)
-                pbar.update(len(chunk))
+        for chunk in pool.imap_unordered(_local_worker_tuple, args_list):
+            chunks.append(chunk)
     flat = [item for sub in chunks for item in sub]
     flat.sort(key=lambda x: x[0])
     return [(t, in_tok, out_tok, err) for _, t, in_tok, out_tok, err in flat]
