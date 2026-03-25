@@ -150,21 +150,16 @@ def run_inference_local(
         reasoning_level=reasoning_level,
     )
     if parallel and model_id is not None and workers > 1:
-        raw = infer_parallel_local(
+        raw_tuples = infer_parallel_local(
             model_id, model_inputs, num_processes=workers, local_device=local_device, **infer_kwargs
         )
-        raw_outputs: List[str | None] = []
-        prices: List[float] = []
-        errors: List[str | None] = []
-        for s in raw:
-            if s.startswith("[ERROR:") and "]" in s:
-                raw_outputs.append(None)
-                prices.append(0.0)
-                errors.append(s.strip())
-            else:
-                raw_outputs.append(s)
-                prices.append(0.0)
-                errors.append(None)
+        model_name = getattr(model, "model", None) or getattr(model, "model_id", "") or ""
+        raw_outputs = [text for text, _, _, _ in raw_tuples]
+        prices = [
+            0.0 if err else compute_price(in_tok, out_tok, model_name)
+            for _, in_tok, out_tok, err in raw_tuples
+        ]
+        errors = [err for _, _, _, err in raw_tuples]
         return (raw_outputs, prices, errors)
     raw_outputs = []
     prices = []

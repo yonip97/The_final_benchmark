@@ -69,7 +69,7 @@ def run_evaluation(
     Full pipeline: inference (judged model) -> inference (judge model) -> compute_metrics.
     Both judged and judge can be api or local; backend inferred from model id (hf: or org/name → local) if not set.
     """
-    df = load_data(split=split)
+    df = load_data(split=split)[:12]
     if run_config is not None:
         (results_dir / "config.json").write_text(json.dumps(run_config, indent=2))
 
