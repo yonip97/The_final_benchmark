@@ -83,6 +83,7 @@ class ClaudeModel:
                 create_kwargs["thinking"] = {"type": "disabled"}
             else:
                 create_kwargs["thinking"] = {"type": "enabled", "budget_tokens": budget}
+                create_kwargs["max_tokens"] +=budget
 
         # Extended thinking: API allows temperature != 1 only when thinking is disabled (see Anthropic docs).
         th = create_kwargs.get("thinking")

@@ -23,5 +23,6 @@ REASONING_MODEL_PREFIXES: tuple[str, ...] = (
     "gpt-5",
     "gemini-2.5",
     "gemini-3",
-    "claude-4",
+    "claude-sonnet-4",
+    "claude-opus-4"
 )
