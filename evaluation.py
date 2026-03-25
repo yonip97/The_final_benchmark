@@ -5,7 +5,7 @@ from typing import Any
 
 from utils import load_data
 from inference import run_judged_model_inference, run_judge_model_inference
-from judgment import results_from_judge_outputs,compute_metrics_from_judgment_results
+from judgment import compute_metrics_from_judgment_results, results_from_judge_outputs
 
 def _model_id_for_results_dir(model_id: str) -> str:
     """HF org/name ids would split path segments; only the results dir name uses this."""
@@ -68,7 +68,7 @@ def run_evaluation(
     Full pipeline: inference (judged model) -> inference (judge model) -> compute_metrics.
     Both judged and judge can be api or local; backend inferred from model id (hf: or org/name → local) if not set.
     """
-    df = load_data(split=split)[:12]
+    df = load_data(split=split)
     if run_config is not None:
         (results_dir / "config.json").write_text(json.dumps(run_config, indent=2))
 

@@ -3,6 +3,8 @@ import time
 
 from anthropic import Anthropic, APIConnectionError, InternalServerError, RateLimitError
 
+from consts import REASONING_MODEL_PREFIXES
+
 # ``output_config.effort`` + adaptive thinking — Opus 4.6 & Sonnet 4.6 only (not Opus 4.5; that uses budget).
 _OUTPUT_EFFORT_PREFIXES = (
     "claude-opus-4-6",
@@ -54,6 +56,19 @@ class ClaudeModel:
             "messages": [{"role": "user", "content": prompt}],
         }
         rl = (kwargs.get("reasoning_level") or "minimal").strip().lower()
+        m = (self.model or "").strip().lower()
+        if not m or not any(m.startswith(p) for p in REASONING_MODEL_PREFIXES):
+            if rl != "minimal":
+                raise ValueError(
+                    "reasoning_level only applies to models in consts.REASONING_MODEL_PREFIXES; "
+                    "otherwise use reasoning_level=minimal."
+                )
+            return {
+                "model": self.model,
+                "max_tokens": max_new_tokens,
+                "messages": [{"role": "user", "content": prompt}],
+                "temperature": temperature,
+            }
 
         if _uses_output_effort(self.model):
             if rl == "minimal":

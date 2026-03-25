@@ -8,6 +8,8 @@ import time
 from google import genai
 from google.genai import types
 
+from consts import REASONING_MODEL_PREFIXES
+
 try:
     from google.api_core import exceptions as google_exc
 
@@ -58,22 +60,25 @@ class GeminiModel:
 
     def create_config(self,max_new_tokens: int,temperature: float, **kwargs) -> types.GenerateContentConfig:
         rl = (kwargs.get("reasoning_level") or "minimal").strip().lower()
+        m = (self.model or "").strip().lower()
+        is_reasoning = bool(m and any(m.startswith(p) for p in REASONING_MODEL_PREFIXES))
+
+        if rl != "minimal" and not is_reasoning:
+            raise ValueError(
+                "reasoning_level only applies to models in consts.REASONING_MODEL_PREFIXES; "
+                "otherwise use reasoning_level=minimal."
+            )
+
         config_kwargs: dict = {"max_output_tokens": max_new_tokens}
         config_kwargs["temperature"] = temperature
 
-        m = self.model.strip().lower()
         if m.startswith("gemini-2.5"):
             config_kwargs["thinking_config"] = types.ThinkingConfig(
                 thinking_budget=_REASONING_LEVEL_TO_THINKING_BUDGET[rl]
             )
-        elif m.startswith("gemini-3") or m.startswith("gemini-4"):
+        elif is_reasoning:
             config_kwargs["thinking_config"] = types.ThinkingConfig(
                 thinking_level=_REASONING_LEVEL_TO_THINKING_LEVEL[rl]
-            )
-        elif rl != "minimal":
-            raise ValueError(
-                "reasoning_level only applies to gemini-2.5* (budget) or gemini-3+* (level); "
-                "otherwise use reasoning_level=minimal."
             )
 
         return types.GenerateContentConfig(**config_kwargs)

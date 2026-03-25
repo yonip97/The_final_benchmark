@@ -1,14 +1,9 @@
 import os
-import re
 import time
 
 from openai import APIConnectionError, APITimeoutError, OpenAI, RateLimitError
 
-
-def _is_gpt_5_or_up(model: str) -> bool:
-    m = (model or "").strip().lower()
-    mo = re.match(r"gpt-(\d+)", m)
-    return bool(mo and int(mo.group(1)) >= 5)
+from consts import REASONING_MODEL_PREFIXES
 
 
 class GPTModel:
@@ -41,7 +36,8 @@ class GPTModel:
             "max_completion_tokens": max_new_tokens,
         }
         rl = (kwargs.get("reasoning_level") or "minimal").strip().lower()
-        if _is_gpt_5_or_up(self.model):
+        m = (self.model or "").strip().lower()
+        if m and any(m.startswith(p) for p in REASONING_MODEL_PREFIXES):
             create_kwargs["reasoning_effort"] = self._reasoning_level_to_reasoning_effort[rl]
         else:
             create_kwargs["temperature"] = temperature

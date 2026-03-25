@@ -6,7 +6,7 @@ We introduce **Final**: a benchmark designed to evaluate LLMs’ ability to perf
 
 ## Dataset
 
-The data files are in **`data/`** (e.g. **`data/data.jsonl`**). A loader is provided in **`dataloader.py`**.
+The data files are in **`data/`** (e.g. **`data/data.jsonl`**). Load them with **`utils.load_data`** (optionally filtered by split).
 
 - **`data/prompts/inference_prompts/<name>/`** — inference prompts: `prompt.txt`, optional `past_text_prompt.txt`
 - **`data/prompts/judgement_prompts/<name>/`** — judge prompts (same layout)
