@@ -61,9 +61,14 @@ Common options: `--results_dir` (default `./results`), `--split` (`dev` or `test
 
 **Model IDs** (see `run.py` → `get_model`): vendor APIs (`openai:...`, `anthropic:...`, `google:...`, or prefixes like `gpt-...`, `claude-...`, `gemini-...`); local Hugging Face with `hf:Org/model` or any id containing `/`.
 
-### Local (on-prem) runs (TBD)
+### Local Hugging Face inference and multi-GPU
 
-Documentation for local runs is **TBD** (not tested yet).
+For on-prem models (`hf:...` or any id with `/`), pass **`--local-device gpu`** or **`cpu`** (defaults to `cpu` in `run.py`).
+
+- **`--inference_workers`** / **`--judgment_workers`**: if **greater than zero**, the pipeline turns on parallel inference. For **API** models that means a thread pool with that many workers. For **local** models, **multiple processes** are used only when the worker count is **greater than one** (`inference.py`): each process loads its own model copy.
+- **Multi-GPU local inference**: with **`--inference_workers N`** and **`N > 1`**, `parallel_inference.infer_parallel_local` spawns **N** independent worker processes, each with its own model instance. GPUs are split **evenly** across workers (contiguous device id ranges). The **number of visible CUDA devices must divide evenly by `N`** (enforced with an assert) so every worker gets the same number of GPUs.
+- **`--inference_workers 0`**: disables that parallel path (sequential inference for the judged model step).
+
 
 ---
 
