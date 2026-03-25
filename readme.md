@@ -59,7 +59,13 @@ Required: `--judged_model`, `--judge_model`, `--inference_prompt`, `--judgement_
 
 Common options: `--results_dir` (default `./results`), `--split` (`dev` or `test`), `--inference_workers`, `--judgment_workers`, `--inference_delimiter`, `--judgment_delimiter`, `--allow_duplicates`, `--temperature`, `--max_new_tokens`, `--reasoning-level`, `--api-retries`.
 
-**Model IDs** (see `run.py` → `get_model`): vendor APIs (`openai:...`, `anthropic:...`, `google:...`, or prefixes like `gpt-...`, `claude-...`, `gemini-...`); local Hugging Face with `hf:Org/model` or any id containing `/`.
+### Models
+
+Supported backends: **OpenAI (GPT)**, **Anthropic**, **Google**, and **local** Hugging Face. How IDs map to implementations is in `run.py` → `get_model`. Supported local repos are **`google/gemma-3-12b-it`** and **`mistralai/Ministral-3-14B-Instruct-2512`**; anything else must be added there.
+
+To add one: implement a class with **`__init__`** and **`infer_with_usage(prompt, max_new_tokens, temperature, **kwargs)`** returning **`(text, input_tokens, output_tokens)`**. Register it in **`run.py`** (`get_model`), optionally **`models/__init__.py`**, and if it is a local model used with **multiple workers**, also **`parallel_inference._local_worker_run`**.
+
+**Reasoning:** the CLI passes **`reasoning_level`** in `kwargs` (`--reasoning-level`); use it in the client for vendor reasoning APIs, and add model prefixes to **`consts.REASONING_MODEL_PREFIXES`** where needed (see existing clients).
 
 ### Local Hugging Face inference and multi-GPU
 
@@ -68,7 +74,6 @@ For on-prem models (`hf:...` or any id with `/`), pass **`--local-device gpu`** 
 - **`--inference_workers`** / **`--judgment_workers`**: if **greater than zero**, the pipeline turns on parallel inference. For **API** models that means a thread pool with that many workers. For **local** models, **multiple processes** are used only when the worker count is **greater than one** (`inference.py`): each process loads its own model copy.
 - **Multi-GPU local inference**: with **`--inference_workers N`** and **`N > 1`**, `parallel_inference.infer_parallel_local` spawns **N** independent worker processes, each with its own model instance. GPUs are split **evenly** across workers (contiguous device id ranges). The **number of visible CUDA devices must divide evenly by `N`** (enforced with an assert) so every worker gets the same number of GPUs.
 - **`--inference_workers 0`**: disables that parallel path (sequential inference for the judged model step).
-
 
 ---
 
