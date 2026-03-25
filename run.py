@@ -8,7 +8,7 @@ from evaluation import (
     run_evaluation,
 )
 from models import ClaudeModel, GeminiModel, Gemma3LocalModel, GPTModel, Ministral3LocalModel
-from load_credentials import load_credentials
+from utils import load_credentials
 
 
 def _torch_local_device(cli: str) -> str:
